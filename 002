@@ -1,4 +1,4 @@
-# 最坏情况时间是O(n)的选择算法
+# 最坏情况时间是O(n)的选择算法 
 
 import math
 import random
