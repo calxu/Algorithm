@@ -28,9 +28,9 @@ def f_graph(k, n):
             if m < cost[i]:
                 cost[i] = m                  # 使 c(i, r)+cost(r) 取最小值
                 d[i] = s[0]                  # 记录当前结点的下一个结点
-    print(d)
+
     p[0] = '0'; p[k-1] = str(n-1)           # 将开始结点 和 结束结点 初始化
-    for j in range(k-2, 0, -1):                   # 计算其余k-2个结点
+    for j in range(k-2, 0, -1):             # 计算其余k-2个结点
         p[j] = d[int(p[j+1])]                # p[j-1]记录当前结点的下一个最短路径结点
 
     print(p)                                 # 输出最短路径
