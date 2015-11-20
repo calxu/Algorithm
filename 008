@@ -21,7 +21,7 @@ def f_graph(k, n):
 
     cost[n-1] = 0                   # 将多段图最后一个结点置0
     for i in range(n-2, -1, -1):   # 遍历 10-0 结点的多段图
-        e = grap_out[str(i)]        # j所有的出度的边
+        e = grap_out[str(i)]        # i所有的出度的边
 
         for s in e:
             m = s[1] + cost[int(s[0])]       # 设r是一个这样的结点,<i,r>是边,且使 c(i, r)+cost(r) 取最小值
