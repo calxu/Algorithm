@@ -65,7 +65,6 @@ def LCKNAP(P, W, M, N, e=0.0001):
     LUBOUND(P, W, M, 0, N, 1)                    # 此结点的下界和上界
 
     L = LBB-e; UB[E] = UBB
-    # Lnode.append((E, UB[E]))                     # 将根结点加入活结点表
 
     while True:
         i = LEVEL[E]; cap = CU[E]; prof = PE[E]
