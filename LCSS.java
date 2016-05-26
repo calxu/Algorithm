@@ -20,14 +20,14 @@ public class LCSS
 	
 	// 方法
 	
-	// 聚类 j*10000 + i
+	// 聚类 i*10000 + j
 	public int cluster(int lineNumber) throws IOException            
 	{
 		boolean flag = false;                                                  // 哨兵标记
 		int i = 1, j = 0;                                                      // 计数器,表示第i个聚类; j用于统于索引下标   
 		FileReader fr = new FileReader("F:\\Trajectory_project\\trajectory\\src\\clusters\\clusters_index"); // 普通方式读取文件
 		BufferedReader bfr = new BufferedReader(fr, 65536);                    // 创建缓冲流,加速读取速度
-		for (i=1; i<= 2500; i++)                                               // 遍历100个聚类
+		for (i=1; i<= 10000; i++)                                               // 遍历100个聚类
 		{
 			Similarity_track = bfr.readLine().split(",");                      // 按","分割
 			j = 0;                                                             // 索引下标置0
@@ -46,7 +46,7 @@ public class LCSS
 		bfr.close();                                                           // 关闭缓冲流
 		fr.close();                                                            // 关闭普通文件
 		
-		return(j*10000+i);                                                     // 返回j , i;j聚类中的第几个;i第几个聚类 
+		return(i*10000+j);                                                     // 返回j , i;j聚类中的第几个;i第几个聚类 
 	}
 	
 	// 第i类中的第j行数据(普通查找)
@@ -67,8 +67,8 @@ public class LCSS
 	{
 		int i,j;                                     // 计数器,表示第i个聚类; j用于统于索引下标   
 		int t = cluster(lineNumber);                 // t = j*1000+i
-		j = t / 10000;                               // 所属聚类中第几行数据
-		i = t % 10000;                               // 所属的聚类号
+		i = t / 10000;                               // 所属的聚类号
+		j = t % 10000;                               // 所属聚类中第几行数据
 		String s = search(i, j);                     // 指定行的数据
 		
 		return s;                                    // 返回轨迹的详细信息
@@ -140,19 +140,19 @@ public class LCSS
 	public void clean(int[] matrix)
 	{
 		//PASS掉边界的情况
-		if (matrix[7] % 50 == 1)                 // 最上边
+		if (matrix[7] % 100 == 1)                 // 最上边
 		{
 			matrix[6] = 0; matrix[7] = 0; matrix[8] = 0;
 		}
-		else if(matrix[2] % 50 == 0)             // 最下边
+		else if(matrix[2] % 100 == 0)             // 最下边
 		{
 			matrix[1] = 0; matrix[2] = 0; matrix[3] = 0;
 		}
-		if (matrix[4] < 1)                       // 最左边
+		if (matrix[4] < 1)                        // 最左边
 		{
 			matrix[1] = 0; matrix[4] = 0; matrix[6] = 0;
 		}
-		else if(matrix[5] > 2500)                // 最右边
+		else if(matrix[5] > 10000)                // 最右边
 		{
 			matrix[3] = 0; matrix[5] = 0; matrix[8] = 0;
 		}
@@ -174,6 +174,21 @@ public class LCSS
 			print_lcs(b, i, j-1);            // 列j减1;进一步进行递归
 	}
 	
+	// 重新定义最短距离e和最少点数o
+	public void reset_e_o(String[] A, int m)
+	{
+		double sum = 0;                             // 此编号轨迹的长度
+		for (int p=3; p<3*m; p += 3)                // 遍历轨迹点求e值
+		{
+			// 计算两点之间的欧式距离
+			sum += Math.sqrt((Math.pow((Double.valueOf(A[p]) - Double.valueOf(A[p+3])), 2) +
+			Math.pow((Double.valueOf(A[p+1]) - Double.valueOf(A[p+4])), 2)));
+			// System.out.println(A[p]+" "+ A[p+3]+" "+ A[p+1]+" "+ A[p+4]);
+		}
+		e = sum / (m-1) * 3;                        // 重新定义最短距离
+		o = m / 3;                                  // 重新定义最少点数
+	}
+	
 	// 计算两条轨迹的相似度       例子:compute(73, 33334)   计算73号轨迹与33334号轨迹的相似度
 	public double compute(int a, int b)
 	{
@@ -187,6 +202,7 @@ public class LCSS
 		{}
 		
 		int m = Integer.valueOf(A[1]);                                         // 获取矩阵A的长度
+		reset_e_o(A, m);                                                       // 根据新点编号的轨迹重新定义值e和值o
 		int n = Integer.valueOf(B[1]);                                         // 获取矩阵B的长度
 		int[][] array = new int[m+1][n+1];                                     // 定义方向矩阵表
 		double value = result(A, B, array);                                    // 计算相似度
@@ -204,6 +220,7 @@ public class LCSS
 	    		temp += String.valueOf(x[k]) + ",";
 	    }
 		Similarity_point[0] = temp;                                            // 将temp赋值给全局变量
+		index = 0;                                                             // 将全局索引下标置0
 		
 		return(value);                                                         // 返回相似度的值
 	}
@@ -216,16 +233,17 @@ public class LCSS
 		// 聚类 并提取出所属类别 和 类中的第几个元素
 		int t = cluster(a);             // 聚类
 		int i, j;                       // i代表所属的类;j代表类中的第几个
-		i = t % 10000;                  // i所属的类
-		j = t / 10000;                  // j代表类中的第几个
+		i = t / 10000;                  // i所属的类
+		j = t % 10000;                  // j代表类中的第几个
 		
 		// 初始化需要扫描的矩阵 并 过滤矩阵
-		int[] matrix = {i, i-51, i-1, i+49, i-50, i+50, i-49, i+1, i+51};   // 9个矩阵
-		clean(matrix);                                                      // 过滤无关矩阵
+		int[] matrix = {i, i-101, i-1, i+99, i-100, i+100, i-99, i+1, i+101};   // 9个矩阵
+		clean(matrix);                                                          // 过滤无关矩阵
 
 		// 轨迹A和轨迹B的比较
 		String A = search(i, j);                    // 找出指定行的轨迹数据
 		int m = Integer.valueOf(A.split(",")[1]);   // 轨迹A的长度
+		reset_e_o(A.split(","), m);                 // 根据新点编号的轨迹重新定义值e和值o
 		String B;                                   // 需要比较的轨迹数据
 		
 		double r = 0;                               // 临时存放相似度计算的结果
