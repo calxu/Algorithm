@@ -1,3 +1,6 @@
+// clusters_index 被聚成100*100个类
+// 10000个类似于100_data文件在相应目录中
+
 import java.io.*;
 import java.lang.Math;
 
