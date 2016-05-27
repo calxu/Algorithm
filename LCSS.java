@@ -164,17 +164,17 @@ public class LCSS
 	// 对x字符数组进行赋值相似轨迹点的编号
 	public void print_lcs(int[][] b, int i, int j)
 	{
-		if ( (i == 0) || (j == 0))                 // 如果为0,则返回
-			return ;                           // 返回
-		if (b[i][j] == 0)                          // 0代表取得左上角的值
+		if ( (i == 0) || (j == 0))           // 如果为0,则返回
+			return ;                         // 返回
+		if (b[i][j] == 0)                    // 0代表取得左上角的值
 		{
-			print_lcs(b, i-1, j-1);            // i, j分别减1;进一步进行递归
-			x[index++] = j-1;                  // 相似的点存储到数组x中
+			print_lcs(b, i-1, j-1);          // i, j分别减1;进一步进行递归
+			x[index++] = i;                  // 相似的点存储到数组x中
 		}
-		else if (b[i][j] == 1)                     // 1代表取得上方的值
-			print_lcs(b, i-1, j);              // 行i减1;进一步进行递归
-		else                                       // 2代表取得左边的值
-			print_lcs(b, i, j-1);              // 列j减1;进一步进行递归
+		else if (b[i][j] == 1)               // 1代表取得上方的值
+			print_lcs(b, i-1, j);            // 行i减1;进一步进行递归
+		else                                 // 2代表取得左边的值
+			print_lcs(b, i, j-1);            // 列j减1;进一步进行递归
 	}
 	
 	// 重新定义最短距离e和最少点数o
@@ -198,12 +198,14 @@ public class LCSS
 		String[] A = null, B = null;                                           // 轨迹A 和 轨迹B
 		try
 		{
-			A = search(a).split(",");                                          // 轨迹A数组
-			B = search(b).split(",");                                          // 轨迹B数组
+			Similarity_track[0] = search(a);                                   // 轨迹A字符串
+			Similarity_track[1] = search(b);                                   // 轨迹B字符串
+			A = Similarity_track[0].split(",");                                // 轨迹A数组
+			B = Similarity_track[1].split(",");                                // 轨迹B数组
 		}
 		catch (IOException e)
 		{}
-		
+
 		int m = Integer.valueOf(A[1]);                                         // 获取矩阵A的长度
 		reset_e_o(A, m);                                                       // 根据新点编号的轨迹重新定义值e和值o
 		int n = Integer.valueOf(B[1]);                                         // 获取矩阵B的长度
@@ -222,7 +224,7 @@ public class LCSS
 	    	else
 	    		temp += String.valueOf(x[k]) + ",";
 	    }
-		Similarity_point[0] = temp;                                            // 将temp赋值给全局变量
+		Similarity_point[1] = temp;                                            // 将temp赋值给全局变量
 		index = 0;                                                             // 将全局索引下标置0
 		
 		return(value);                                                         // 返回相似度的值
