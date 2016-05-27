@@ -169,7 +169,7 @@ public class LCSS
 		if (b[i][j] == 0)                    // 0代表取得左上角的值
 		{
 			print_lcs(b, i-1, j-1);          // i, j分别减1;进一步进行递归
-			x[index++] = i;                  // 相似的点存储到数组x中
+			x[index++] = j-1;                // 相似的点存储到数组x中
 		}
 		else if (b[i][j] == 1)               // 1代表取得上方的值
 			print_lcs(b, i-1, j);            // 行i减1;进一步进行递归
