@@ -27,14 +27,15 @@ public class LCSS
 	public int cluster(int lineNumber) throws IOException            
 	{
 		boolean flag = false;                                                  // 哨兵标记
-		int i = 1, j = 0;                                                      // 计数器,表示第i个聚类; j用于统于索引下标   
+		int i = 1, j = 0;                                                      // 计数器,表示第i个聚类; j用于统于索引下标
+		String[] track;                                                        // 轨迹编号
 		FileReader fr = new FileReader("F:\\Trajectory_project\\trajectory\\src\\clusters\\clusters_index"); // 普通方式读取文件
 		BufferedReader bfr = new BufferedReader(fr, 65536);                    // 创建缓冲流,加速读取速度
-		for (i=1; i<= 10000; i++)                                               // 遍历100个聚类
+		for (i=1; i<= 10000; i++)                                              // 遍历10000个聚类
 		{
-			Similarity_track = bfr.readLine().split(",");                      // 按","分割
+			track = bfr.readLine().split(",");                                 // 按","分割
 			j = 0;                                                             // 索引下标置0
-		    for (String element: Similarity_track)
+		    for (String element: track)
 		    {
 		    	if (Integer.parseInt(element) == lineNumber)                   // 如果相等,即找到对应的轨迹所属的类
 		    	{
@@ -69,12 +70,12 @@ public class LCSS
 	public String search(int lineNumber) throws IOException
 	{
 		int i,j;                                     // 计数器,表示第i个聚类; j用于统于索引下标   
-		int t = cluster(lineNumber);                 // t = j*1000+i
+		int t = cluster(lineNumber);                 // t = i*10000+j
 		i = t / 10000;                               // 所属的聚类号
 		j = t % 10000;                               // 所属聚类中第几行数据
 		String s = search(i, j);                     // 指定行的数据
-		
-		return s;                                    // 返回轨迹的详细信息
+
+		return(s);                                   // 返回轨迹的详细信息
 	}
 	
 	// 返回两条轨迹的相似度的结果
@@ -258,8 +259,7 @@ public class LCSS
 			if (element == 0)                       // 如果为过滤掉的矩阵则跳过
 				continue;
 			
-			System.out.println(element);
-			
+			//System.out.println(element);
 	    	FileReader fr = new FileReader("F:\\Trajectory_project\\trajectory\\src\\clusters\\"+element+"_data"); // 普通方式读取文件
 	    	BufferedReader bfr = new BufferedReader(fr, 65536);                                                    // 创建缓冲流
 	    	while ( (B = bfr.readLine())!=null )           // 读取每行数据
