@@ -7,6 +7,8 @@ import java.lang.Math;
 public class LCSS
 {	
 	// 属性
+	// 文件路径(绝对路径)
+	private String Path = "E:\\clusters\\";
 	
 	// LCSS算法待确定参数
 	private double e = 0.01;              // 两点之间的距离
@@ -21,6 +23,7 @@ public class LCSS
 	public  String[] Similarity_track = new String[10];    // 相似轨迹
 	
 	
+	
 	// 方法
 	
 	// 聚类 i*10000 + j
@@ -29,7 +32,7 @@ public class LCSS
 		boolean flag = false;                                                  // 哨兵标记
 		int i = 1, j = 0;                                                      // 计数器,表示第i个聚类; j用于统于索引下标
 		String[] track;                                                        // 轨迹编号
-		FileReader fr = new FileReader("F:\\Trajectory_project\\trajectory\\src\\clusters\\clusters_index"); // 普通方式读取文件
+		FileReader fr = new FileReader(Path+"clusters_index"); // 普通方式读取文件
 		BufferedReader bfr = new BufferedReader(fr, 65536);                    // 创建缓冲流,加速读取速度
 		for (i=1; i<= 10000; i++)                                              // 遍历10000个聚类
 		{
@@ -56,7 +59,7 @@ public class LCSS
 	// 第i类中的第j行数据(普通查找)
 	public String search(int i, int j) throws IOException
 	{
-		FileReader fr = new FileReader("F:\\Trajectory_project\\trajectory\\src\\clusters\\"+i+"_data"); // 普通方式读取文件
+		FileReader fr = new FileReader(Path+i+"_data"); // 普通方式读取文件
 		BufferedReader bfr = new BufferedReader(fr, 65536);                                              // 创建缓冲流
 		int k = 0;
 		while (k++ < j) bfr.readLine();                                        // 跳过前面j-1行 
@@ -187,7 +190,6 @@ public class LCSS
 			// 计算两点之间的欧式距离
 			sum += Math.sqrt((Math.pow((Double.valueOf(A[p]) - Double.valueOf(A[p+3])), 2) +
 			Math.pow((Double.valueOf(A[p+1]) - Double.valueOf(A[p+4])), 2)));
-			// System.out.println(A[p]+" "+ A[p+3]+" "+ A[p+1]+" "+ A[p+4]);
 		}
 		e = sum / (m-1) * 3;                        // 重新定义最短距离
 		o = m / 3;                                  // 重新定义最少点数
@@ -215,10 +217,12 @@ public class LCSS
 		
 		// 查找相似点
 		x = new int[m+1];                                                      // 初始化相似点存储数组
+		for (int w = 0; w <= m; w++)                                           // 初始值为-1
+			x[w] = -1;
 		print_lcs(array, m, n);                                                // 输出相似轨迹点的编号
 	    
 		String temp = "";                                                      // 初始化temp字符串
-		for (int k = 0; x[k]!=0; k++ )                                         // 遍历x数组,直至不为0
+		for (int k = 0; x[k]!=-1; k++ )                                        // 遍历x数组,直至不为-1
 	    {
 	    	if (x[k+1] == 0)                                                   // 考虑是否加"," 
 	            temp += String.valueOf(x[k]);                                  // 连接所有轨迹点的编号
@@ -258,10 +262,8 @@ public class LCSS
 		{
 			if (element == 0)                       // 如果为过滤掉的矩阵则跳过
 				continue;
-			
-			//System.out.println(element);
-	    	FileReader fr = new FileReader("F:\\Trajectory_project\\trajectory\\src\\clusters\\"+element+"_data"); // 普通方式读取文件
-	    	BufferedReader bfr = new BufferedReader(fr, 65536);                                                    // 创建缓冲流
+	    	FileReader fr = new FileReader(Path+element+"_data"); // 普通方式读取文件
+	    	BufferedReader bfr = new BufferedReader(fr, 65536);   // 创建缓冲流
 	    	while ( (B = bfr.readLine())!=null )           // 读取每行数据
 	    	{
 	    		if (A.equals(B))                           // 如果A和B是同一条轨迹则跳过
@@ -273,6 +275,8 @@ public class LCSS
 			    if (r >= s[9])                             // 如果相似度的计算结果大于最小值
 			    {
 			    	x = new int[m+1];                      // 初始化相似点存储数组
+					for (int w = 0; w <= m; w++)           // 初始值为-1
+						x[w] = -1;
 			    	
 			    	print_lcs(b, m, n);                    // 输出相似轨迹点的编号                   
 				    
@@ -280,7 +284,7 @@ public class LCSS
 			    	s[9] = r;                              // 当前值替换最小值
 				    Similarity_track[9] = B;               // 替换轨迹
 				    String temp = "";                      // 初始化字符串
-				    for (int k = 0; x[k]!=0; k++ )
+				    for (int k = 0; x[k]!=-1; k++ )
 				    {
 				    	if (x[k+1] == 0)                   // 考虑是否加"," 
 				            temp += String.valueOf(x[k]);  // 连接所有轨迹点的编号
