@@ -7,7 +7,6 @@
 
 def place(row, column):
     """
-        限界函数；
         如果一个皇后能放在第row行和column[row]列，则返回true；否则返回false。
         前row行已放置皇后
     """
